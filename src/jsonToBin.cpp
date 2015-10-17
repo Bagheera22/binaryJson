@@ -45,8 +45,7 @@ ISerialize* convert(const rapidjson::GenericValue<Encoding, Allocator>& json)
     if(json.IsNull())
     {
         assert(false);
-        return nullptr;
-        //return createEmptyNode();
+        return nullptr; // TODO
     }
     if(json.IsBool())
     {
