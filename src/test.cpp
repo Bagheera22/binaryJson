@@ -22,7 +22,7 @@ char* readFile(const std::string& pathname)
     return string;
 }
 
-void print(IReader* data)
+/*void print(IReader* data)
 {
   switch(data->getType())
   {
@@ -121,64 +121,28 @@ void print(IReader* data)
      break;
   };
 
-}
+}*/
 
 
-void Serialize(SerializeVector* root)
+
+
+int main(int argc, char* argv[])
 {
-  uint64_t size = root->getBytesSize();
-  std::cout <<"size: "<<size<<"\n";
-  void* m = malloc(size);
-  root->serialize(m);
-  std::cout <<"serialize\n";
-  FILE* f = fopen("a.binJson","w");
-  fwrite(m , sizeof(char), size,f);
-  fclose(f);
+  if( argc == 4 && strcmp(argv[1],"toBin") == 0 )
+  {
 
-  //Reader reader;
-  //IAttribute* xx = reader.read(m);
-  //print(xx);
-  uint64_t sizel = 0;
-  auto a = read(m, &sizel );
-  print(a);
-}
-
-int main()
-{
-  // test1
-  std::vector<ISerialize*> test1;
-  test1.push_back(new SerializeInt8(101));
-  test1.push_back(new SerializeInt16(201));
-  test1.push_back(new SerializeInt8(30));
-  test1.push_back(new SerializeInt8(40));
-
-
-  test1.push_back(new SerializeInt8(101));
-  test1.push_back(new SerializeInt32(201));
-  test1.push_back(new SerializeInt64(30));
-  test1.push_back(new SerializeFloat(40.02));
-
-  test1.push_back(new SerializeString("guapaaaaaaaa"));
-
-  std::map<std::string, ISerialize*> map;
-  map.insert(std::make_pair("aoo",new SerializeInt8(10)));
-  test1.push_back(new SerializeMap(std::move(map)));
-
-  //SerializeVector*  root =  new SerializeVector(std::move(test1));
-  //Serialize(root);
-  //*
-    auto a = readFile("/Volumes/UUI/binjson/data.json");
-    ISerialize* b = jsonToBin(a);
+    auto dataJson = readFile(argv[2]);
+    ISerialize* bin = jsonToBin(dataJson);
     
-    uint64_t size = b->getBytesSize();
-    void* m = malloc(size);
-    b->serialize(m);
-    FILE* f = fopen("/Volumes/UUI/binjson/data.binJson","w");
-    fwrite(m , sizeof(char), size,f);
+    uint64_t sizeBin = bin->getBytesSize();
+    void*  dataBin= malloc(sizeBin);
+    bin->serialize(dataBin);
+
+    FILE* f = fopen(argv[3],"w");
+    fwrite(dataBin , sizeof(char), sizeBin,f);
     fclose(f);
     
-    uint64_t sizel = 0;
-    print(read(m, &sizel ));
-  //*/
-    
+    return 0;
+  }
+  printf("-toBin origin dest\n");
 }
