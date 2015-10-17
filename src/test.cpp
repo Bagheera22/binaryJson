@@ -139,7 +139,7 @@ void Serialize(SerializeVector* root)
   //IAttribute* xx = reader.read(m);
   //print(xx);
   uint64_t sizel = 0;
-  auto a = getReader(m, &sizel );
+  auto a = read(m, &sizel );
   print(a);
 }
 
@@ -178,7 +178,7 @@ int main()
     fclose(f);
     
     uint64_t sizel = 0;
-    print(getReader(m, &sizel ));
+    print(read(m, &sizel ));
   //*/
     
 }
