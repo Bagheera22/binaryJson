@@ -99,6 +99,22 @@ public:
   Type getType() const override;
 };
 
+class SerializeNull : public ISerialize
+{
+protected:
+  Type m_type;
+public:
+  SerializeNull();
+  
+  ~SerializeNull();
+  
+  void* serialize(void* data) const override;
+  
+  Type getType() const override;
+  
+  uint64_t getBytesSize() const override;
+};
+
 
 using SerializeInt8 = SerializeValue<Type::INT8, int8_t>;
 using SerializeInt16 = SerializeValue<Type::INT16, int16_t>;

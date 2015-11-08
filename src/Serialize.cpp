@@ -292,6 +292,31 @@ Type SerializeMap::getType() const
   return m_type;
 }
 
+SerializeNull::SerializeNull()
+:m_type(Type::NULL_)
+{
+}
+
+SerializeNull::~SerializeNull()
+{
+}
+
+void* SerializeNull::serialize(void* data) const
+{
+    data = writeBuffer(data,(void*)&m_type,sizeof(Type));
+  return data;
+}
+
+Type SerializeNull::getType() const
+{
+  return m_type;
+}
+
+
+uint64_t SerializeNull::getBytesSize() const
+{
+  return sizeof(Type);
+}
 
 
 void* serializeAttr(ISerialize* v, void* data)
@@ -349,6 +374,9 @@ switch(v->getType())
   case Type::BOOL:
     data = ((SerializeBool*)v)->serialize(data);
     break;
+  case Type::NULL_:
+    data = ((SerializeNull*)v)->serialize(data);
+    break;
 };
   return data;
 }
@@ -394,6 +422,9 @@ uint64_t sizeType(ISerialize* v)
       return((SerializeMap*)v)->getBytesSize();
     case Type::BOOL:
       return((SerializeBool*)v)->getBytesSize();
+    case Type::NULL_:
+      return ((SerializeNull*)v)->getBytesSize();
+      break;
   }
 }
 

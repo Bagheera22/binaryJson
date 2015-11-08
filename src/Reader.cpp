@@ -347,6 +347,12 @@ IReader* read(const void* data, uint64_t* size )
       *size = sizeof(AttributeValue<Type::BOOL, bool>);
       return value;
     }
+    case Type::NULL_:
+    {
+      IReader* value = nullptr;
+      *size = sizeof(Type);
+      return value;
+    }
     default:
     return nullptr;
   };

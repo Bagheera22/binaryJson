@@ -10,7 +10,7 @@ enum class Type : uint8_t //todo
 {
   INT8,INT16,INT32,INT64,
   UINT8,UINT16,UINT32,UINT64,
-  FLOAT, DOUBLE, BOOL,
+  FLOAT, DOUBLE, BOOL, NULL_,
   VECTOR8, VECTOR16, VECTOR32, VECTOR64,
   MAP8, MAP16, MAP32, MAP64,
   STRING8, STRING16, STRING32, STRING64
@@ -56,29 +56,6 @@ public:
   }
 };
 
-/*
-template<Type type, typename Value>
-class ComplexAttribute : public IAttribute
-{
-private:
-  Value m_bytesSize;
-public:
-  ComplexAttribute()
-  : IAttribute(type)
-  {}
-
-  ~ComplexAttribute(){};
-
-  inline Value getSize() const
-  {
-    return m_bytesSize;
-  }
-  
-  inline void setSize(Value size)
-  {
-    m_bytesSize = size;
-  }
-};*/
 
 
 #endif
