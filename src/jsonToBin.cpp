@@ -19,7 +19,7 @@ typedef rapidjson::UTF8<char> Encoding;
 typedef rapidjson::CrtAllocator Allocator;
 
 using namespace rapidjson;
-ISerialize* convert(const rapidjson::GenericValue<Encoding, Allocator>& json)
+ISerialize* convertBin(const rapidjson::GenericValue<Encoding, Allocator>& json)
 {
     using Value = rapidjson::GenericValue<Encoding, Allocator>;
     if(json.IsObject())
@@ -27,7 +27,7 @@ ISerialize* convert(const rapidjson::GenericValue<Encoding, Allocator>& json)
         std::map<std::string,ISerialize*> map;
         for(Value::ConstMemberIterator itr = json.MemberBegin(), end = json.MemberEnd(); itr != end; ++itr)
         {
-            map.insert(std::make_pair(itr->name.GetString(), convert(itr->value)));
+            map.insert(std::make_pair(itr->name.GetString(), convertBin(itr->value)));
         }
         return new SerializeMap(std::move(map));
     }
@@ -38,14 +38,13 @@ ISerialize* convert(const rapidjson::GenericValue<Encoding, Allocator>& json)
         vector.reserve(json.Size());
         for(rapidjson::SizeType i = 0, size = json.Size(); i < size; i++)
         {
-            vector.push_back( convert(json[i]));
+            vector.push_back( convertBin(json[i]));
         }
         return new SerializeVector(std::move(vector));
     }
     if(json.IsNull())
     {
-        assert(false);
-        return nullptr; // TODO
+        return new SerializeNull();
     }
     if(json.IsBool())
     {
@@ -120,7 +119,7 @@ ISerialize* jsonToBin(const char* data)
         vector.reserve(doc.Size());
         for(rapidjson::SizeType size = doc.Size(),i = 0 ; i < size; i++)
         {
-            vector.push_back( convert(doc[i]) );
+            vector.push_back( convertBin(doc[i]) );
         }
         return new SerializeVector(std::move(vector));
 
@@ -130,7 +129,7 @@ ISerialize* jsonToBin(const char* data)
         std::map<std::string,ISerialize*> map;
         for(Value::ConstMemberIterator itr = doc.MemberBegin(), end = doc.MemberEnd(); itr != end; ++itr)
         {
-            map.insert(std::make_pair(itr->name.GetString(), convert(itr->value)));
+            map.insert(std::make_pair(itr->name.GetString(), convertBin(itr->value)));
         }
         return new SerializeMap(std::move(map));
     }

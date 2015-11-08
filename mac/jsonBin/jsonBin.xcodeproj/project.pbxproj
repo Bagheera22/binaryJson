@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		9F0DF0BE1BD2A7AC009E470B /* jsonToBin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F0DF0A91BD2A7AC009E470B /* jsonToBin.cpp */; settings = {ASSET_TAGS = (); }; };
-		9F0DF0BF1BD2A7AC009E470B /* Reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F0DF0AB1BD2A7AC009E470B /* Reader.cpp */; settings = {ASSET_TAGS = (); }; };
-		9F0DF0C01BD2A7AC009E470B /* Serialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F0DF0AD1BD2A7AC009E470B /* Serialize.cpp */; settings = {ASSET_TAGS = (); }; };
-		9F0DF0C11BD2A7AC009E470B /* test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F0DF0AF1BD2A7AC009E470B /* test.cpp */; settings = {ASSET_TAGS = (); }; };
-		9F0DF0C21BD2A7AC009E470B /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 9F0DF0BD1BD2A7AC009E470B /* README.md */; settings = {ASSET_TAGS = (); }; };
+		59EDEC8D1BEF7CC100ECA83E /* BinTojson.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 59EDEC8B1BEF7CC100ECA83E /* BinTojson.cpp */; };
+		9F0DF0BE1BD2A7AC009E470B /* jsonToBin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F0DF0A91BD2A7AC009E470B /* jsonToBin.cpp */; };
+		9F0DF0BF1BD2A7AC009E470B /* Reader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F0DF0AB1BD2A7AC009E470B /* Reader.cpp */; };
+		9F0DF0C01BD2A7AC009E470B /* Serialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F0DF0AD1BD2A7AC009E470B /* Serialize.cpp */; };
+		9F0DF0C11BD2A7AC009E470B /* test.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9F0DF0AF1BD2A7AC009E470B /* test.cpp */; };
+		9F0DF0C21BD2A7AC009E470B /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 9F0DF0BD1BD2A7AC009E470B /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,6 +28,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		59EDEC8B1BEF7CC100ECA83E /* BinTojson.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BinTojson.cpp; sourceTree = "<group>"; };
+		59EDEC8C1BEF7CC100ECA83E /* BinTojson.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = BinTojson.hpp; sourceTree = "<group>"; };
 		9F0DF09E1BD2A78A009E470B /* jsonBin */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jsonBin; sourceTree = BUILT_PRODUCTS_DIR; };
 		9F0DF0A91BD2A7AC009E470B /* jsonToBin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = jsonToBin.cpp; sourceTree = "<group>"; };
 		9F0DF0AA1BD2A7AC009E470B /* jsonToBin.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = jsonToBin.hpp; sourceTree = "<group>"; };
@@ -88,6 +91,8 @@
 		9F0DF0A81BD2A7AC009E470B /* src */ = {
 			isa = PBXGroup;
 			children = (
+				59EDEC8B1BEF7CC100ECA83E /* BinTojson.cpp */,
+				59EDEC8C1BEF7CC100ECA83E /* BinTojson.hpp */,
 				9F0DF0A91BD2A7AC009E470B /* jsonToBin.cpp */,
 				9F0DF0AA1BD2A7AC009E470B /* jsonToBin.hpp */,
 				9F0DF0AB1BD2A7AC009E470B /* Reader.cpp */,
@@ -194,6 +199,7 @@
 				9F0DF0C11BD2A7AC009E470B /* test.cpp in Sources */,
 				9F0DF0C21BD2A7AC009E470B /* README.md in Sources */,
 				9F0DF0BE1BD2A7AC009E470B /* jsonToBin.cpp in Sources */,
+				59EDEC8D1BEF7CC100ECA83E /* BinTojson.cpp in Sources */,
 				9F0DF0C01BD2A7AC009E470B /* Serialize.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
