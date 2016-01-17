@@ -10,11 +10,11 @@ class ISerialize
     virtual ~ISerialize(){}
     virtual void* serialize(void* data) const = 0;
     virtual uint64_t getBytesSize() const = 0;
-    virtual Type getType() const = 0;
+    virtual InternalType getInternalType() const = 0;
 };
 void* writeBuffer(void* buffer, void *data, size_t len);
 
-template<Type type, typename Value>
+template<InternalType type, typename Value>
 class SerializeValue : public ISerialize
 {
 protected:
@@ -31,7 +31,7 @@ public:
     return writeBuffer(data,(void*)&m_value,sizeof(AttributeValue<type,Value>));
   }
 
-  Type getType() const override
+  InternalType getInternalType() const override
   {
     return m_value.getType();
   }
@@ -47,7 +47,7 @@ class SerializeString : public ISerialize
 {
 protected:
   std::string m_data;
-  Type m_type;
+  InternalType m_type;
 public:
   SerializeString( const std::string& data );
 
@@ -55,7 +55,7 @@ public:
 
   void* serialize(void* data) const override;
 
-  Type getType() const override;
+  InternalType getInternalType() const override;
 
   uint64_t getBytesSize() const override;
 };
@@ -66,10 +66,10 @@ class SerializeVector : public ISerialize
 {
 protected:
   std::vector<ISerialize*> m_value;
-  Type m_type;
+  InternalType m_type;
   uint64_t m_size;
 public:
-  SerializeVector(std::vector<ISerialize*>&& value);
+  SerializeVector(const std::vector<ISerialize*>& value);
 
   ~SerializeVector();
 
@@ -77,7 +77,7 @@ public:
 
   void* serialize(void* data) const  override;
 
-  Type getType() const override;
+  InternalType getInternalType() const override;
 };
 
 
@@ -85,10 +85,10 @@ class SerializeMap : public ISerialize
 {
 protected:
   std::map<std::string,ISerialize*> m_value;
-  Type m_type;
+  InternalType m_type;
   uint64_t m_size;
 public:
-  SerializeMap(  std::map<std::string,ISerialize*>&& value);
+  SerializeMap(  const std::map<std::string,ISerialize*>& value);
 
   ~SerializeMap();
 
@@ -96,13 +96,13 @@ public:
 
   void* serialize(void* data) const override;
 
-  Type getType() const override;
+  InternalType getInternalType() const override;
 };
 
 class SerializeNull : public ISerialize
 {
 protected:
-  Type m_type;
+  InternalType m_type;
 public:
   SerializeNull();
   
@@ -110,25 +110,25 @@ public:
   
   void* serialize(void* data) const override;
   
-  Type getType() const override;
+  InternalType getInternalType() const override;
   
   uint64_t getBytesSize() const override;
 };
 
 
-using SerializeInt8 = SerializeValue<Type::INT8, int8_t>;
-using SerializeInt16 = SerializeValue<Type::INT16, int16_t>;
-using SerializeInt32 = SerializeValue<Type::INT32, int32_t>;
-using SerializeInt64 = SerializeValue<Type::INT64, int64_t>;
+using SerializeInt8 = SerializeValue<InternalType::INT8, int8_t>;
+using SerializeInt16 = SerializeValue<InternalType::INT16, int16_t>;
+using SerializeInt32 = SerializeValue<InternalType::INT32, int32_t>;
+using SerializeInt64 = SerializeValue<InternalType::INT64, int64_t>;
 
 
-using SerializeUInt8 = SerializeValue<Type::UINT8, uint8_t>;
-using SerializeUInt16 = SerializeValue<Type::UINT16, uint16_t>;
-using SerializeUInt32 = SerializeValue<Type::UINT32, uint32_t>;
-using SerializeUInt64 = SerializeValue<Type::UINT64, uint64_t>;
+using SerializeUInt8 = SerializeValue<InternalType::UINT8, uint8_t>;
+using SerializeUInt16 = SerializeValue<InternalType::UINT16, uint16_t>;
+using SerializeUInt32 = SerializeValue<InternalType::UINT32, uint32_t>;
+using SerializeUInt64 = SerializeValue<InternalType::UINT64, uint64_t>;
 
-using SerializeFloat = SerializeValue<Type::FLOAT, float>;
-using SerializeDouble = SerializeValue<Type::DOUBLE, double>;
-using SerializeBool = SerializeValue<Type::BOOL, bool>;
+using SerializeFloat = SerializeValue<InternalType::FLOAT, float>;
+using SerializeDouble = SerializeValue<InternalType::DOUBLE, double>;
+using SerializeBool = SerializeValue<InternalType::BOOL, bool>;
 
 #endif

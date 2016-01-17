@@ -3,95 +3,117 @@
 #include <cassert>
 
 ReaderString::ReaderString(const void* valueAttr)
-:m_type((const Type*)valueAttr)
+:m_type(InternalType::NULL_)
 ,m_size(0)
-{}
-
-Type ReaderString::getType() const
 {
-  return *m_type; //todo
-}
-
-void ReaderString::parser() const
-{
-  const unsigned char* current = (unsigned char*)m_type + sizeof(Type);
+  assert(valueAttr != nullptr);
+  m_type = *((InternalType*)valueAttr);
+  const unsigned char* sizePointer = (const unsigned char*)valueAttr + sizeof(InternalType);
   
-  if(*m_type == Type::STRING8)
+  if(m_type == InternalType::STRING8)
   {
-    m_size = *((uint8_t*)current);
-    current += sizeof(uint8_t);
+    m_size = *((uint8_t*)sizePointer);
+    m_str = (const char*)(sizePointer + sizeof(uint8_t));
   }
-  else if(*m_type == Type::STRING16)
+  else if(m_type == InternalType::STRING16)
   {
-    m_size = *((uint16_t*)current);
-    current += sizeof(uint16_t);
+    m_size = *((uint16_t*)sizePointer);
+    m_str = (const char*)(sizePointer + sizeof(uint16_t));
   }
-  else if(*m_type == Type::STRING32)
+  else if(m_type == InternalType::STRING32)
   {
-    m_size = *((uint32_t*)current);
-    current += sizeof(uint32_t);
+    m_size = *((uint32_t*)sizePointer);
+    m_str = (const char*)(sizePointer + sizeof(uint32_t));
   }
-  else if(*m_type == Type::STRING64)
+  else if(m_type == InternalType::STRING64)
   {
-    m_size = *((uint64_t*)current);
-    current += sizeof(uint64_t);
+    m_size = *((uint64_t*)sizePointer);
+    m_str = (const char*)(sizePointer + sizeof(uint64_t));
   }
   else
   {
     assert(false);
   }
-  m_str = (const char*)current;
+  
 }
 
-
+InternalType ReaderString::getInternalType() const
+{
+  return m_type;
+}
 
 ReaderVector::ReaderVector(const void* attr)
-: m_type((const Type*)attr)
+: m_type(InternalType::NULL_)
+, m_beginData(nullptr)
 , m_size(0)
 {
+  assert(attr != nullptr);
+  m_type = *((InternalType*)attr);
+  const unsigned char* sizePointer = (const unsigned char*)attr + sizeof(InternalType);
+  
+  if(m_type == InternalType::VECTOR8)
+  {
+    m_size = *((uint8_t*)sizePointer);
+    m_beginData = sizePointer + sizeof(uint8_t);
+  }
+  else if(m_type == InternalType::VECTOR16)
+  {
+    m_size = *((uint16_t*)sizePointer);
+    m_beginData = sizePointer + sizeof(uint16_t);
+  }
+  else if(m_type == InternalType::VECTOR32)
+  {
+    m_size = *((uint32_t*)sizePointer);
+    m_beginData = sizePointer + sizeof(uint32_t);
+  }
+  else if(m_type == InternalType::VECTOR64)
+  {
+    m_size = *((uint64_t*)sizePointer);
+    m_beginData = sizePointer + sizeof(uint64_t);
+  }
+  else
+  {
+    assert(false);
+  }
 }
 
-Type ReaderVector::getType() const
+InternalType ReaderVector::getInternalType() const
 {
-  return *m_type; //todo
+  return m_type;
+}
+
+uint64_t ReaderVector::getFullObjectBytesSize() const
+{
+  uint64_t size = sizeof(InternalType) + m_size;
+  
+  if(m_type == InternalType::VECTOR8)
+  {
+    size += sizeof(uint8_t);
+  }
+  else if(m_type == InternalType::VECTOR16)
+  {
+    size += sizeof(uint16_t);
+  }
+  else if(m_type == InternalType::VECTOR32)
+  {
+    size += sizeof(uint32_t);
+  }
+  else if(m_type == InternalType::VECTOR64)
+  {
+    size += sizeof(uint64_t);
+  }
+  else
+  {
+    assert(false);
+  }
+  return size;
 }
 
 void ReaderVector::parser() const
 {
-  const unsigned char* current = (unsigned char*)m_type + sizeof(Type);
-  
-  if(*m_type == Type::VECTOR8)
-  {
-    m_size = *((uint8_t*)current);
-    current += sizeof(uint8_t);
-  }
-  else if(*m_type == Type::VECTOR16)
-  {
-    m_size = *((uint16_t*)current);
-    current += sizeof(uint16_t);
-  }
-  else if(*m_type == Type::VECTOR32)
-  {
-    m_size = *((uint32_t*)current);
-    current += sizeof(uint32_t);
-  }
-  else if(*m_type == Type::VECTOR64)
-  {
-    m_size = *((uint64_t*)current);
-    current += sizeof(uint64_t);
-  }
-  else
-  {
-    assert(false);
-  }
-
-  if(m_size == 0)
-  {
-    return;
-  }
-  
+  const unsigned char* current = m_beginData;
   const unsigned char* end =  current + m_size;
-
+  
   while(current < end)
   {
     uint64_t size = 0;
@@ -122,13 +144,71 @@ std::vector<IReader*>::const_iterator ReaderVector::end() const
 
 
 ReaderMap::ReaderMap(const void* attr)
-:m_type((const Type*)attr)
-,m_size(0)
+: m_type(InternalType::NULL_)
+, m_beginData(nullptr)
+, m_size(0)
 {
+  assert(attr != nullptr);
+  m_type = *((InternalType*)attr);
+  const unsigned char* sizePointer = (const unsigned char*)attr + sizeof(InternalType);
+
+  if(m_type == InternalType::MAP8)
+  {
+    m_size = *((uint8_t*)sizePointer);
+    m_beginData = sizePointer + sizeof(uint8_t);
+  }
+  else if(m_type == InternalType::MAP16)
+  {
+    m_size = *((uint16_t*)sizePointer);
+    m_beginData = sizePointer + sizeof(uint16_t);
+  }
+  else if(m_type == InternalType::MAP32)
+  {
+    m_size = *((uint32_t*)sizePointer);
+    m_beginData = sizePointer + sizeof(uint32_t);
+  }
+  else if(m_type == InternalType::MAP64)
+  {
+    m_size = *((uint64_t*)sizePointer);
+    m_beginData = sizePointer + sizeof(uint64_t);
+  }
+  else
+  {
+    assert(false);
+  }
+  
 }
-Type ReaderMap::getType() const
+
+InternalType ReaderMap::getInternalType() const
 {
-  return *m_type; //todo
+  return m_type;
+}
+
+uint64_t ReaderMap::getFullObjectBytesSize() const
+{
+  uint64_t size = sizeof(InternalType) + m_size;
+  
+  if(m_type == InternalType::MAP8)
+  {
+    size += sizeof(uint8_t);
+  }
+  else if(m_type == InternalType::MAP16)
+  {
+    size += sizeof(uint16_t);
+  }
+  else if(m_type == InternalType::MAP32)
+  {
+    size += sizeof(uint32_t);
+  }
+  else if(m_type == InternalType::MAP64)
+  {
+    size += sizeof(uint64_t);
+  }
+  else
+  {
+    assert(false);
+  }
+  return size;
 }
 
 std::map<std::string,IReader*>::const_iterator ReaderMap::begin() const
@@ -151,38 +231,7 @@ std::map<std::string,IReader*>::const_iterator ReaderMap::end() const
 
 void ReaderMap::parser() const
 {
-  const unsigned char* current = (unsigned char*)m_type + sizeof(Type);
-  
-  if(*m_type == Type::MAP8)
-  {
-    m_size = *((uint8_t*)current);
-    current += sizeof(uint8_t);
-  }
-  else if(*m_type == Type::MAP16)
-  {
-    m_size = *((uint16_t*)current);
-    current += sizeof(uint16_t);
-  }
-  else if(*m_type == Type::MAP32)
-  {
-    m_size = *((uint32_t*)current);
-    current += sizeof(uint32_t);
-  }
-  else if(*m_type == Type::MAP64)
-  {
-    m_size = *((uint64_t*)current);
-    current += sizeof(uint64_t);
-  }
-  else
-  {
-    assert(false);
-  }
-  
-  if(m_size == 0)
-  {
-    return;
-  }
-  
+  const unsigned char* current = m_beginData;
   const unsigned char* end =  current + m_size;
 
   while(current < end)
@@ -205,152 +254,123 @@ void ReaderMap::parser() const
 
 IReader* read(const void* data, uint64_t* size )
 {
-  Type* v = (Type*)data;
+  InternalType* v = (InternalType*)data;
   switch(*v)
   {
-    case Type::INT8:
+    case InternalType::INT8:
     {
       auto value = new ReaderInt8(data);
-      *size = sizeof(AttributeValue<Type::INT8, int8_t>);
+      *size = sizeof(AttributeValue<InternalType::INT8, int8_t>);
       return value;
     }
-    case Type::INT16:
+    case InternalType::INT16:
     {
       auto value = new ReaderInt16(data);
-      *size = sizeof(AttributeValue<Type::INT16, int16_t>);
+      *size = sizeof(AttributeValue<InternalType::INT16, int16_t>);
       return value;
     }
-    case Type::INT32:
+    case InternalType::INT32:
     {
       auto value = new ReaderInt32(data);
-      *size = sizeof(AttributeValue<Type::INT32, int32_t>);
+      *size = sizeof(AttributeValue<InternalType::INT32, int32_t>);
       return value;
     }
-    case Type::INT64:
+    case InternalType::INT64:
     {
       auto value = new ReaderInt64(data);
-      *size = sizeof(AttributeValue<Type::INT64, int64_t>);
+      *size = sizeof(AttributeValue<InternalType::INT64, int64_t>);
       return value;
     }
     //--
-    case Type::UINT8:
+    case InternalType::UINT8:
     {
       auto value = new ReaderUInt8(data);
-      *size = sizeof(AttributeValue<Type::UINT8, uint8_t>);
+      *size = sizeof(AttributeValue<InternalType::UINT8, uint8_t>);
       return value;
     }
-    case Type::UINT16:
+    case InternalType::UINT16:
     {
       auto value = new ReaderUInt16(data);
-      *size = sizeof(AttributeValue<Type::UINT16, uint16_t>);
+      *size = sizeof(AttributeValue<InternalType::UINT16, uint16_t>);
       return value;
     }
-    case Type::UINT32:
+    case InternalType::UINT32:
     {
       auto value = new ReaderUInt32(data);
-      *size = sizeof(AttributeValue<Type::UINT32, uint32_t>);
+      *size = sizeof(AttributeValue<InternalType::UINT32, uint32_t>);
       return value;
     }
-    case Type::UINT64:
+    case InternalType::UINT64:
     {
       auto value = new ReaderUInt64(data);
-      *size = sizeof(AttributeValue<Type::UINT64, uint64_t>);
+      *size = sizeof(AttributeValue<InternalType::UINT64, uint64_t>);
       return value;
     }
-    case Type::FLOAT:
+    case InternalType::FLOAT:
     {
       auto value = new ReaderFloat(data);
-      *size = sizeof(AttributeValue<Type::FLOAT, float>);
+      *size = sizeof(AttributeValue<InternalType::FLOAT, float>);
       return value;
     }
-    case Type::DOUBLE:
+    case InternalType::DOUBLE:
     {
       auto value = new ReaderDouble(data);
-      *size = sizeof(AttributeValue<Type::DOUBLE, double>);
+      *size = sizeof(AttributeValue<InternalType::DOUBLE, double>);
       return value;
     }
-    case Type::STRING8:
+    case InternalType::STRING8:
     {
       auto value = new ReaderString(data);
-      *size = sizeof(Type) + sizeof(uint8_t) + value->length();
+      *size = sizeof(InternalType) + sizeof(uint8_t) + value->length();
       return value;
     }
-    case Type::STRING16:
+    case InternalType::STRING16:
     {
       auto value = new ReaderString(data);
-      *size = sizeof(Type) + sizeof(uint16_t) + value->length();
+      *size = sizeof(InternalType) + sizeof(uint16_t) + value->length();
       return value;
     }
-    case Type::STRING32:
+    case InternalType::STRING32:
     {
       auto value = new ReaderString(data);
-      *size = sizeof(Type) + sizeof(uint32_t) + value->length();
+      *size = sizeof(InternalType) + sizeof(uint32_t) + value->length();
       return value;
     }
-    case Type::STRING64:
+    case InternalType::STRING64:
     {
       auto value = new ReaderString(data);
-      *size = sizeof(Type) + sizeof(uint64_t) + value->length();
+      *size = sizeof(InternalType) + sizeof(uint64_t) + value->length();
       return value;
     }
-    case Type::VECTOR8:
+    case InternalType::VECTOR8:
+    case InternalType::VECTOR16:
+    case InternalType::VECTOR32:
+    case InternalType::VECTOR64:
     {
       auto value = new ReaderVector(data);
-      *size = sizeof(Type) + sizeof(uint8_t) + value->getBytesSize();
+      *size = value->getFullObjectBytesSize();
       return value;
     }
-    case Type::VECTOR16:
-    {
-      auto value = new ReaderVector(data);
-      *size = sizeof(Type) + sizeof(uint16_t) + value->getBytesSize();
-      return value;
-    }
-    case Type::VECTOR32:
-    {
-      auto value = new ReaderVector(data);
-      *size = sizeof(Type) + sizeof(uint32_t) + value->getBytesSize();
-      return value;
-    }
-    case Type::VECTOR64:
-    {
-      auto value = new ReaderVector(data);
-      *size = sizeof(Type) + sizeof(uint64_t) + value->getBytesSize();
-      return value;
-    }
-    case Type::MAP8:
+   
+    case InternalType::MAP8:
+    case InternalType::MAP16:
+    case InternalType::MAP32:
+    case InternalType::MAP64:
     {
       auto value = new ReaderMap(data);
-      *size = sizeof(Type) + sizeof(uint8_t) + value->getBytesSize();
+      *size = value->getFullObjectBytesSize();
       return value;
     }
-    case Type::MAP16:
-    {
-      auto value = new ReaderMap(data);
-      *size = sizeof(Type) + sizeof(uint16_t) + value->getBytesSize();
-      return value;
-    }
-    case Type::MAP32:
-    {
-      auto value = new ReaderMap(data);
-      *size = sizeof(Type) + sizeof(uint32_t) + value->getBytesSize();
-      return value;
-    }
-    case Type::MAP64:
-    {
-      auto value = new ReaderMap(data);
-      *size = sizeof(Type) + sizeof(uint64_t) + value->getBytesSize();
-      return value;
-    }
-    case Type::BOOL:
+    case InternalType::BOOL:
     {
       auto value = new ReaderBool(data);
-      *size = sizeof(AttributeValue<Type::BOOL, bool>);
+      *size = sizeof(AttributeValue<InternalType::BOOL, bool>);
       return value;
     }
-    case Type::NULL_:
+    case InternalType::NULL_:
     {
       IReader* value = nullptr;
-      *size = sizeof(Type);
+      *size = sizeof(InternalType);
       return value;
     }
     default:

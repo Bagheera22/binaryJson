@@ -11,19 +11,19 @@ SerializeString::SerializeString( const std::string& data )
 {
   if (data.size() <=std::numeric_limits<uint8_t>::max() )
   {
-    m_type = Type::STRING8;
+    m_type = InternalType::STRING8;
   }
   else if (data.size() <=std::numeric_limits<uint16_t>::max() )
   {
-    m_type = Type::STRING16;
+    m_type = InternalType::STRING16;
   }
   else if (data.size() <=std::numeric_limits<uint32_t>::max() )
   {
-    m_type = Type::STRING32;
+    m_type = InternalType::STRING32;
   }
   else if (data.size() <=std::numeric_limits<uint64_t>::max() )
   {
-    m_type = Type::STRING64;
+    m_type = InternalType::STRING64;
   }
   else
   {
@@ -35,23 +35,23 @@ SerializeString::~SerializeString(){};
 
 void* SerializeString::serialize(void* data) const
 {
-  data = writeBuffer(data,(void*)&m_type,sizeof(Type));
-  if(  m_type == Type::STRING8)
+  data = writeBuffer(data,(void*)&m_type,sizeof(InternalType));
+  if(  m_type == InternalType::STRING8)
   {
     uint8_t size = (uint8_t)m_data.size();
     data = writeBuffer(data,(void*)&size,sizeof(uint8_t));
   }
-  else if(  m_type == Type::STRING16)
+  else if(  m_type == InternalType::STRING16)
   {
     uint16_t size = (uint16_t)m_data.size();
     data = writeBuffer(data,(void*)&size,sizeof(uint16_t));
   }
-  else if(  m_type == Type::STRING32)
+  else if(  m_type == InternalType::STRING32)
   {
     uint32_t size = (uint32_t)m_data.size();
     data = writeBuffer(data,(void*)&size,sizeof(uint32_t));
   }
-  else if(  m_type == Type::STRING64)
+  else if(  m_type == InternalType::STRING64)
   {
     uint64_t size = (uint64_t)m_data.size();
     data = writeBuffer(data,(void*)&size,sizeof(uint64_t));
@@ -60,27 +60,27 @@ void* SerializeString::serialize(void* data) const
   return data;
 }
 
-Type SerializeString::getType() const
+InternalType SerializeString::getInternalType() const
 {
   return m_type;
 }
 
 uint64_t SerializeString::getBytesSize() const
 {
-  uint64_t size = sizeof(Type) + m_data.size() * sizeof(char);
-  if(  m_type == Type::STRING8)
+  uint64_t size = sizeof(InternalType) + m_data.size() * sizeof(char);
+  if(  m_type == InternalType::STRING8)
   {
     size += sizeof(uint8_t);
   }
-  else if(  m_type == Type::STRING16)
+  else if(  m_type == InternalType::STRING16)
   {
     size += sizeof(uint16_t);
   }
-  else if(  m_type == Type::STRING32)
+  else if(  m_type == InternalType::STRING32)
   {
     size += sizeof(uint32_t);
   }
-  else if(  m_type == Type::STRING64)
+  else if(  m_type == InternalType::STRING64)
   {
     size += sizeof(uint64_t);
   }
@@ -90,7 +90,7 @@ uint64_t SerializeString::getBytesSize() const
 
 
 
-SerializeVector::SerializeVector(std::vector<ISerialize*>&& value)
+SerializeVector::SerializeVector(const std::vector<ISerialize*>& value)
 : m_value(std::move(value))
 {
   uint64_t size = 0;
@@ -102,19 +102,19 @@ SerializeVector::SerializeVector(std::vector<ISerialize*>&& value)
   
   if (size <=std::numeric_limits<uint8_t>::max() )
   {
-    m_type = Type::VECTOR8;
+    m_type = InternalType::VECTOR8;
   }
   else if (size <=std::numeric_limits<uint16_t>::max() )
   {
-    m_type = Type::VECTOR16;
+    m_type = InternalType::VECTOR16;
   }
   else if (size <=std::numeric_limits<uint32_t>::max() )
   {
-    m_type = Type::VECTOR32;
+    m_type = InternalType::VECTOR32;
   }
   else if (size <=std::numeric_limits<uint64_t>::max() )
   {
-    m_type = Type::VECTOR64;
+    m_type = InternalType::VECTOR64;
   }
   else
   {
@@ -133,20 +133,20 @@ SerializeVector::~SerializeVector()
 
 uint64_t SerializeVector::getBytesSize() const
 {
-  uint64_t size = sizeof(Type) + m_size;
-  if(  m_type == Type::VECTOR8)
+  uint64_t size = sizeof(InternalType) + m_size;
+  if(  m_type == InternalType::VECTOR8)
   {
     size += sizeof(uint8_t);
   }
-  else if(  m_type == Type::VECTOR16)
+  else if(  m_type == InternalType::VECTOR16)
   {
     size += sizeof(uint16_t);
   }
-  else if(  m_type == Type::VECTOR32)
+  else if(  m_type == InternalType::VECTOR32)
   {
     size += sizeof(uint32_t);
   }
-  else if(  m_type == Type::VECTOR64)
+  else if(  m_type == InternalType::VECTOR64)
   {
     size += sizeof(uint64_t);
   }
@@ -155,23 +155,23 @@ uint64_t SerializeVector::getBytesSize() const
 
 void* SerializeVector::serialize(void* data) const
 {
-  data = writeBuffer(data,(void*)&m_type,sizeof(Type));
-  if(  m_type == Type::VECTOR8)
+  data = writeBuffer(data,(void*)&m_type,sizeof(InternalType));
+  if(  m_type == InternalType::VECTOR8)
   {
     uint8_t size = (uint8_t)m_size;
     data = writeBuffer(data,(void*)&size,sizeof(uint8_t));
   }
-  else if(  m_type == Type::VECTOR16)
+  else if(  m_type == InternalType::VECTOR16)
   {
     uint16_t size = (uint16_t)m_size;
     data = writeBuffer(data,(void*)&size,sizeof(uint16_t));
   }
-  else if(  m_type == Type::VECTOR32)
+  else if(  m_type == InternalType::VECTOR32)
   {
     uint32_t size = (uint32_t)m_size;
     data = writeBuffer(data,(void*)&size,sizeof(uint32_t));
   }
-  else if(  m_type == Type::VECTOR64)
+  else if(  m_type == InternalType::VECTOR64)
   {
     uint64_t size = (uint64_t)m_size;
     data = writeBuffer(data,(void*)&size,sizeof(uint64_t));
@@ -183,14 +183,14 @@ void* SerializeVector::serialize(void* data) const
   return data;
 }
 
-Type SerializeVector::getType() const
+InternalType SerializeVector::getInternalType() const
 {
   return m_type;
 }
 
 
-SerializeMap::SerializeMap(  std::map<std::string,ISerialize*>&& value)
-: m_value(std::move(value))
+SerializeMap::SerializeMap(  const std::map<std::string,ISerialize*>& value)
+: m_value(value)
 {
   uint64_t size = sizeof(uint16_t) * m_value.size();
   for( auto & v : m_value)
@@ -202,19 +202,19 @@ SerializeMap::SerializeMap(  std::map<std::string,ISerialize*>&& value)
   
   if (size <=std::numeric_limits<uint8_t>::max() )
   {
-    m_type = Type::MAP8;
+    m_type = InternalType::MAP8;
   }
   else if (size <=std::numeric_limits<uint16_t>::max() )
   {
-    m_type = Type::MAP16;
+    m_type = InternalType::MAP16;
   }
   else if (size <=std::numeric_limits<uint32_t>::max() )
   {
-    m_type = Type::MAP32;
+    m_type = InternalType::MAP32;
   }
   else if (size <=std::numeric_limits<uint64_t>::max() )
   {
-    m_type = Type::MAP64;
+    m_type = InternalType::MAP64;
   }
   else
   {
@@ -234,20 +234,20 @@ SerializeMap::~SerializeMap()
 
 uint64_t SerializeMap::getBytesSize() const
 {
-  uint64_t size = sizeof(Type) + m_size;
-  if(  m_type == Type::MAP8)
+  uint64_t size = sizeof(InternalType) + m_size;
+  if(  m_type == InternalType::MAP8)
   {
     size += sizeof(uint8_t);
   }
-  else if(  m_type == Type::MAP16)
+  else if(  m_type == InternalType::MAP16)
   {
     size += sizeof(uint16_t);
   }
-  else if(  m_type == Type::MAP32)
+  else if(  m_type == InternalType::MAP32)
   {
     size += sizeof(uint32_t);
   }
-  else if(  m_type == Type::MAP64)
+  else if(  m_type == InternalType::MAP64)
   {
     size += sizeof(uint64_t);
   }
@@ -256,23 +256,23 @@ uint64_t SerializeMap::getBytesSize() const
 
 void* SerializeMap::serialize(void* data) const
 {
-  data = writeBuffer(data,(void*)&m_type,sizeof(Type));
-  if(  m_type == Type::MAP8)
+  data = writeBuffer(data,(void*)&m_type,sizeof(InternalType));
+  if(  m_type == InternalType::MAP8)
   {
     uint8_t size = (uint8_t)m_size;
     data = writeBuffer(data,(void*)&size,sizeof(uint8_t));
   }
-  else if(  m_type == Type::MAP16)
+  else if(  m_type == InternalType::MAP16)
   {
     uint16_t size = (uint16_t)m_size;
     data = writeBuffer(data,(void*)&size,sizeof(uint16_t));
   }
-  else if(  m_type == Type::MAP32)
+  else if(  m_type == InternalType::MAP32)
   {
     uint32_t size = (uint32_t)m_size;
     data = writeBuffer(data,(void*)&size,sizeof(uint32_t));
   }
-  else if(  m_type == Type::MAP64)
+  else if(  m_type == InternalType::MAP64)
   {
     uint64_t size = (uint64_t)m_size;
     data = writeBuffer(data,(void*)&size,sizeof(uint64_t));
@@ -287,13 +287,13 @@ void* SerializeMap::serialize(void* data) const
   return data;
 }
 
-Type SerializeMap::getType() const
+InternalType SerializeMap::getInternalType() const
 {
   return m_type;
 }
 
 SerializeNull::SerializeNull()
-:m_type(Type::NULL_)
+:m_type(InternalType::NULL_)
 {
 }
 
@@ -303,11 +303,11 @@ SerializeNull::~SerializeNull()
 
 void* SerializeNull::serialize(void* data) const
 {
-    data = writeBuffer(data,(void*)&m_type,sizeof(Type));
+    data = writeBuffer(data,(void*)&m_type,sizeof(InternalType));
   return data;
 }
 
-Type SerializeNull::getType() const
+InternalType SerializeNull::getInternalType() const
 {
   return m_type;
 }
@@ -315,66 +315,66 @@ Type SerializeNull::getType() const
 
 uint64_t SerializeNull::getBytesSize() const
 {
-  return sizeof(Type);
+  return sizeof(InternalType);
 }
 
 
 void* serializeAttr(ISerialize* v, void* data)
 {
-switch(v->getType())
+switch(v->getInternalType())
 {
-  case Type::INT8:
+  case InternalType::INT8:
     data = ((SerializeInt8*)v)->serialize(data);
     break;
-  case Type::INT16:
+  case InternalType::INT16:
     data = ((SerializeInt16*)v)->serialize(data);
     break;
-  case Type::INT32:
+  case InternalType::INT32:
     data = ((SerializeInt32*)v)->serialize(data);
     break;
-  case Type::INT64:
+  case InternalType::INT64:
     data = ((SerializeInt64*)v)->serialize(data);
     break;
-  case Type::UINT8:
+  case InternalType::UINT8:
     data = ((SerializeUInt8*)v)->serialize(data);
     break;
-  case Type::UINT16:
+  case InternalType::UINT16:
     data = ((SerializeUInt16*)v)->serialize(data);
     break;
-  case Type::UINT32:
+  case InternalType::UINT32:
     data = ((SerializeUInt32*)v)->serialize(data);
     break;
-  case Type::UINT64:
+  case InternalType::UINT64:
     data = ((SerializeUInt64*)v)->serialize(data);
     break;
-  case Type::FLOAT:
+  case InternalType::FLOAT:
     data = ((SerializeFloat*)v)->serialize(data);
     break;
-  case Type::DOUBLE:
+  case InternalType::DOUBLE:
     data = ((SerializeDouble*)v)->serialize(data);
     break;
-  case Type::STRING8:
-  case Type::STRING16:
-  case Type::STRING32:
-  case Type::STRING64:
+  case InternalType::STRING8:
+  case InternalType::STRING16:
+  case InternalType::STRING32:
+  case InternalType::STRING64:
     data = ((SerializeString*)v)->serialize(data);
     break;
-  case Type::VECTOR8:
-  case Type::VECTOR16:
-  case Type::VECTOR32:
-  case Type::VECTOR64:
+  case InternalType::VECTOR8:
+  case InternalType::VECTOR16:
+  case InternalType::VECTOR32:
+  case InternalType::VECTOR64:
     data = ((SerializeVector*)v)->serialize(data);
     break;
-  case Type::MAP8:
-  case Type::MAP16:
-  case Type::MAP32:
-  case Type::MAP64:
+  case InternalType::MAP8:
+  case InternalType::MAP16:
+  case InternalType::MAP32:
+  case InternalType::MAP64:
     data = ((SerializeMap*)v)->serialize(data);
     break;
-  case Type::BOOL:
+  case InternalType::BOOL:
     data = ((SerializeBool*)v)->serialize(data);
     break;
-  case Type::NULL_:
+  case InternalType::NULL_:
     data = ((SerializeNull*)v)->serialize(data);
     break;
 };
@@ -383,46 +383,46 @@ switch(v->getType())
 
 uint64_t sizeType(ISerialize* v)
 {
-  switch(v->getType())
+  switch(v->getInternalType())
   {
-    case Type::INT8:
+    case InternalType::INT8:
       return ((SerializeInt8*)v)->getBytesSize();
-    case Type::INT16:
+    case InternalType::INT16:
       return ((SerializeInt16*)v)->getBytesSize();
-    case Type::INT32:
+    case InternalType::INT32:
       return ((SerializeInt32*)v)->getBytesSize();
-    case Type::INT64:
+    case InternalType::INT64:
       return ((SerializeInt64*)v)->getBytesSize();
-    case Type::UINT8:
+    case InternalType::UINT8:
       return ((SerializeUInt8*)v)->getBytesSize();
-    case Type::UINT16:
+    case InternalType::UINT16:
       return ((SerializeUInt16*)v)->getBytesSize();
-    case Type::UINT32:
+    case InternalType::UINT32:
       return ((SerializeUInt32*)v)->getBytesSize();
-    case Type::UINT64:
+    case InternalType::UINT64:
       return ((SerializeUInt64*)v)->getBytesSize();
-    case Type::FLOAT:
+    case InternalType::FLOAT:
       return ((SerializeFloat*)v)->getBytesSize();
-    case Type::DOUBLE:
+    case InternalType::DOUBLE:
       return ((SerializeDouble*)v)->getBytesSize();
-    case Type::STRING8:
-    case Type::STRING16:
-    case Type::STRING32:
-    case Type::STRING64:
+    case InternalType::STRING8:
+    case InternalType::STRING16:
+    case InternalType::STRING32:
+    case InternalType::STRING64:
       return ((SerializeString*)v)->getBytesSize();
-    case Type::VECTOR8:
-    case Type::VECTOR16:
-    case Type::VECTOR32:
-    case Type::VECTOR64:
+    case InternalType::VECTOR8:
+    case InternalType::VECTOR16:
+    case InternalType::VECTOR32:
+    case InternalType::VECTOR64:
       return ((SerializeVector*)v)->getBytesSize();
-    case Type::MAP8:
-    case Type::MAP16:
-    case Type::MAP32:
-    case Type::MAP64:
+    case InternalType::MAP8:
+    case InternalType::MAP16:
+    case InternalType::MAP32:
+    case InternalType::MAP64:
       return((SerializeMap*)v)->getBytesSize();
-    case Type::BOOL:
+    case InternalType::BOOL:
       return((SerializeBool*)v)->getBytesSize();
-    case Type::NULL_:
+    case InternalType::NULL_:
       return ((SerializeNull*)v)->getBytesSize();
       break;
   }

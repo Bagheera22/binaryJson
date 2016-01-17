@@ -6,7 +6,7 @@
 #include <vector>
 #include <map>
 
-enum class Type : uint8_t //todo
+enum class InternalType : uint8_t //todo
 {
   NULL_ = 0,
   INT8,INT16,INT32,INT64,
@@ -17,23 +17,34 @@ enum class Type : uint8_t //todo
   STRING8, STRING16, STRING32, STRING64
 };
 
+enum class Type : uint8_t //todo
+{
+  NULL_ = 0,
+  INT8,INT16,INT32,INT64,
+  UINT8,UINT16,UINT32,UINT64,
+  FLOAT, DOUBLE, BOOL,
+  VECTOR,
+  MAP,
+  STRING
+};
+
 class IAttribute
 {
 private:
-  Type m_type;
+  InternalType m_type;
 public:
-  IAttribute(Type type)
+  IAttribute(InternalType type)
   :m_type(type){};
 
   ~IAttribute(){};
 
-  inline Type getType() const
+  inline InternalType getType() const
   {
     return m_type;
   }
 };
 
-template<Type t, typename Value>
+template<InternalType t, typename Value>
 struct AttributeValue : public IAttribute
 {
 private:
@@ -46,14 +57,9 @@ public:
 
   ~AttributeValue(){};
 
-  inline Value getValue() const
+  inline const Value& getValue() const
   {
     return m_value;
-  }
-
-  inline Type getType() const
-  {
-    return t;
   }
 };
 

@@ -23,73 +23,74 @@ typedef rapidjson::CrtAllocator Allocator;
 
 rapidjson::GenericValue<Encoding, Allocator>* convert(const IReader* obj, Allocator& allocator)
 {
-    Type v = obj->getType();
+    InternalType v = obj->getInternalType();
     switch(v)
     {
-        case Type::INT8:
+        case InternalType::INT8:
         {
             const auto value = static_cast<const ReaderInt8*>(obj);
             return new rapidjson::GenericValue<Encoding, Allocator>(value->getValue());
         }
-        case Type::INT16:
+        case InternalType::INT16:
         {
             const auto value = static_cast<const ReaderInt16*>(obj);
             return new rapidjson::GenericValue<Encoding, Allocator>(value->getValue());
         }
-        case Type::INT32:
+        case InternalType::INT32:
         {
             const auto value = static_cast<const ReaderInt32*>(obj);
             return new rapidjson::GenericValue<Encoding, Allocator>(value->getValue());
         }
-        case Type::INT64:
+        case InternalType::INT64:
         {
             const auto value = static_cast<const ReaderInt64*>(obj);
             return new rapidjson::GenericValue<Encoding, Allocator>(value->getValue());
         }
             //--
-        case Type::UINT8:
+        case InternalType::UINT8:
         {
             const auto value = static_cast<const ReaderUInt8*>(obj);
             return new rapidjson::GenericValue<Encoding, Allocator>(value->getValue());
         }
-        case Type::UINT16:
+        case InternalType::UINT16:
         {
             const auto value = static_cast<const ReaderUInt16*>(obj);
             return new rapidjson::GenericValue<Encoding, Allocator>(value->getValue());
         }
-        case Type::UINT32:
+        case InternalType::UINT32:
         {
             const auto value = static_cast<const ReaderUInt32*>(obj);
             return new rapidjson::GenericValue<Encoding, Allocator>(value->getValue());
         }
-        case Type::UINT64:
+        case InternalType::UINT64:
         {
             const auto value = static_cast<const ReaderUInt64*>(obj);
             return new rapidjson::GenericValue<Encoding, Allocator>(value->getValue());
         }
-        case Type::FLOAT:
+        case InternalType::FLOAT:
         {
             const auto value = static_cast<const ReaderFloat*>(obj);
             return new rapidjson::GenericValue<Encoding, Allocator>(value->getValue());
         }
-        case Type::DOUBLE:
+        case InternalType::DOUBLE:
         {
             const auto value = static_cast<const ReaderDouble*>(obj);
             return new rapidjson::GenericValue<Encoding, Allocator>(value->getValue());
         }
-        case Type::STRING8:
-        case Type::STRING16:
-        case Type::STRING32:
-        case Type::STRING64:
+        case InternalType::STRING8:
+        case InternalType::STRING16:
+        case InternalType::STRING32:
+        case InternalType::STRING64:
         {
             const auto value = static_cast<const ReaderString*>(obj);
             auto valueResult = new rapidjson::GenericValue<Encoding, Allocator>();
             valueResult->SetString(value->getValue().data(), static_cast<rapidjson::SizeType>(value->getValue().length()),allocator);
+          return valueResult;
         }
-        case Type::VECTOR8:
-        case Type::VECTOR16:
-        case Type::VECTOR32:
-        case Type::VECTOR64:
+        case InternalType::VECTOR8:
+        case InternalType::VECTOR16:
+        case InternalType::VECTOR32:
+        case InternalType::VECTOR64:
         {
             const auto value = static_cast<const ReaderVector*>(obj);
             auto valueResult = new rapidjson::GenericValue<Encoding, Allocator>(rapidjson::Type::kArrayType);
@@ -100,29 +101,30 @@ rapidjson::GenericValue<Encoding, Allocator>* convert(const IReader* obj, Alloca
                 auto elementResult = convert(element,allocator);
                 valueResult->PushBack(*elementResult, allocator);
             }
-            
+            return valueResult;
         }
-        case Type::MAP8:
-        case Type::MAP16:
-        case Type::MAP32:
-        case Type::MAP64:
+        case InternalType::MAP8:
+        case InternalType::MAP16:
+        case InternalType::MAP32:
+        case InternalType::MAP64:
         {
             const auto value = static_cast<const ReaderMap*>(obj);
             auto valueResult = new rapidjson::GenericValue<Encoding, Allocator>(rapidjson::Type::kObjectType);
-            valueResult->Reserve((rapidjson::SizeType)value->size(), allocator);
+            //valueResult->Reserve((rapidjson::SizeType)value->size(), allocator);
             for (auto it = value->begin() , end = value->end() ; it != end ; ++it)
             {
                 auto element = it->second;
                 auto elementResult = convert(element,allocator);
                 valueResult->AddMember(it->first.c_str(),*elementResult,allocator);
             }
+            return valueResult;
         }
-        case Type::BOOL:
+        case InternalType::BOOL:
         {
             const auto value = static_cast<const ReaderBool*>(obj);
             return new rapidjson::GenericValue<Encoding, Allocator>(value->getValue());
         }
-        case Type::NULL_:
+        case InternalType::NULL_:
         {
             auto value = new rapidjson::GenericValue<Encoding, Allocator>();
             value->SetNull();

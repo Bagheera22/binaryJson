@@ -121,7 +121,7 @@ ISerialize* jsonToBin(const char* data)
         {
             vector.push_back( convertBin(doc[i]) );
         }
-        return new SerializeVector(std::move(vector));
+        return new SerializeVector(vector);
 
     }
     if(doc.IsObject())
@@ -131,7 +131,7 @@ ISerialize* jsonToBin(const char* data)
         {
             map.insert(std::make_pair(itr->name.GetString(), convertBin(itr->value)));
         }
-        return new SerializeMap(std::move(map));
+        return new SerializeMap(map);
     }
     return nullptr;
 }

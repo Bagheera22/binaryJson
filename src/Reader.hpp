@@ -7,12 +7,14 @@
 class IReader
 {
   public:
+  virtual ~IReader() = default;
+    virtual InternalType getInternalType() const = 0;
     virtual Type getType() const = 0;
 };
 
 IReader* read(const void* data, uint64_t* size );
 
-template<Type type, typename Value>
+template<InternalType type, typename Value>
 class ReaderValue : public IReader
 {
 private:
@@ -22,13 +24,17 @@ public:
   :m_valueAttr((AttributeValue<type,Value>*)valueAttr)
   {
   }
-  inline Value getValue() const
+  inline const Value& getValue() const
   {
     return m_valueAttr->getValue();
   }
-  Type getType() const override
+  InternalType getInternalType() const override
   {
     return m_valueAttr->getType();
+  }
+  Type getType() const override
+  {
+    return static_cast<Type>( m_valueAttr->getType());
   }
 };
 
@@ -36,7 +42,7 @@ public:
 class ReaderString : public IReader
 {
 private:
-  const Type* m_type;
+  InternalType m_type;
   mutable const char* m_str;
   mutable uint64_t m_size;
 public:
@@ -44,32 +50,28 @@ public:
 
   inline std::string getValue() const
   {
-    if (m_size == 0)
-    {
-      parser();
-    }
     std::string value(m_str,(size_t)m_size);
     return std::move(value);
   }
-  Type getType() const override;
+  InternalType getInternalType() const override;
+  
+  Type getType() const override
+  {
+    return Type::STRING;
+  }
 
   inline uint64_t length()
   {
-    if (m_size == 0)
-    {
-      parser();
-    }
     return m_size;
   }
-private:
-  void parser() const;
 
 };
 
 class ReaderVector : public IReader
 {
 private:
-  const Type* m_type;
+  InternalType m_type;
+  const unsigned char* m_beginData;
   mutable uint64_t m_size;
   mutable std::vector<IReader*> m_elements;
 public:
@@ -91,9 +93,14 @@ public:
     }
     return m_elements.size();
   }
-  Type getType() const override;
+  InternalType getInternalType() const override;
+  
+  Type getType() const override
+  {
+    return Type::VECTOR;
+  }
 
-  inline uint64_t getBytesSize() const
+  inline uint64_t getContentBytesSize() const
   {
     if (m_elements.empty())
     {
@@ -101,6 +108,8 @@ public:
     }
     return m_size;
   }
+  uint64_t getFullObjectBytesSize() const;
+  
 
   std::vector<IReader*>::const_iterator begin() const;
 
@@ -113,7 +122,8 @@ private:
 class ReaderMap : public IReader
 {
 private:
-  const Type* m_type;
+  InternalType m_type;
+  const unsigned char* m_beginData;
   mutable uint64_t m_size;
   mutable std::map<std::string,IReader*> m_elements;
 public:
@@ -140,9 +150,14 @@ public:
     }
     return m_elements.size();
   }
-  Type getType() const override;
+  InternalType getInternalType() const override;
+  
+  Type getType() const override
+  {
+    return Type::MAP;
+  }
 
-  inline uint64_t getBytesSize() const
+  inline uint64_t getContentBytesSize() const
   {
     if (m_elements.empty())
     {
@@ -150,6 +165,8 @@ public:
     }
     return m_size;
   }
+
+  uint64_t getFullObjectBytesSize() const;
 
   std::map<std::string,IReader*>::const_iterator begin() const;
 
@@ -159,18 +176,18 @@ private:
     void parser() const;
 };
 
-using ReaderInt8 = ReaderValue<Type::INT8, int8_t>;
-using ReaderInt16 = ReaderValue<Type::INT16, int16_t>;
-using ReaderInt32 = ReaderValue<Type::INT32, int32_t>;
-using ReaderInt64 = ReaderValue<Type::INT64, int64_t>;
+using ReaderInt8 = ReaderValue<InternalType::INT8, int8_t>;
+using ReaderInt16 = ReaderValue<InternalType::INT16, int16_t>;
+using ReaderInt32 = ReaderValue<InternalType::INT32, int32_t>;
+using ReaderInt64 = ReaderValue<InternalType::INT64, int64_t>;
 
-using ReaderUInt8 = ReaderValue<Type::UINT8, uint8_t>;
-using ReaderUInt16 = ReaderValue<Type::UINT16, uint16_t>;
-using ReaderUInt32 = ReaderValue<Type::UINT32, uint32_t>;
-using ReaderUInt64 = ReaderValue<Type::UINT64, uint64_t>;
+using ReaderUInt8 = ReaderValue<InternalType::UINT8, uint8_t>;
+using ReaderUInt16 = ReaderValue<InternalType::UINT16, uint16_t>;
+using ReaderUInt32 = ReaderValue<InternalType::UINT32, uint32_t>;
+using ReaderUInt64 = ReaderValue<InternalType::UINT64, uint64_t>;
 
-using ReaderFloat = ReaderValue<Type::FLOAT, float>;
-using ReaderDouble = ReaderValue<Type::DOUBLE, double>;
-using ReaderBool = ReaderValue<Type::BOOL, bool>;
+using ReaderFloat = ReaderValue<InternalType::FLOAT, float>;
+using ReaderDouble = ReaderValue<InternalType::DOUBLE, double>;
+using ReaderBool = ReaderValue<InternalType::BOOL, bool>;
 
 #endif
