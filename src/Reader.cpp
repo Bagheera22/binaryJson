@@ -86,26 +86,10 @@ uint64_t ReaderVector::getFullObjectBytesSize() const
 {
   uint64_t size = sizeof(InternalType) + m_size;
   
-  if(m_type == InternalType::VECTOR8)
-  {
-    size += sizeof(uint8_t);
-  }
-  else if(m_type == InternalType::VECTOR16)
-  {
-    size += sizeof(uint16_t);
-  }
-  else if(m_type == InternalType::VECTOR32)
-  {
-    size += sizeof(uint32_t);
-  }
-  else if(m_type == InternalType::VECTOR64)
-  {
-    size += sizeof(uint64_t);
-  }
-  else
-  {
-    assert(false);
-  }
+  uint64_t sizes[4] = {sizeof(uint8_t), sizeof(uint16_t), sizeof(uint32_t), sizeof(uint64_t)};
+  int index = ((int)m_type - (int)InternalType::VECTOR8);
+  assert(index>=0 && index<4);
+  size += sizes[index];
   return size;
 }
 
@@ -188,26 +172,10 @@ uint64_t ReaderMap::getFullObjectBytesSize() const
 {
   uint64_t size = sizeof(InternalType) + m_size;
   
-  if(m_type == InternalType::MAP8)
-  {
-    size += sizeof(uint8_t);
-  }
-  else if(m_type == InternalType::MAP16)
-  {
-    size += sizeof(uint16_t);
-  }
-  else if(m_type == InternalType::MAP32)
-  {
-    size += sizeof(uint32_t);
-  }
-  else if(m_type == InternalType::MAP64)
-  {
-    size += sizeof(uint64_t);
-  }
-  else
-  {
-    assert(false);
-  }
+  uint64_t sizes[4] = {sizeof(uint8_t), sizeof(uint16_t), sizeof(uint32_t), sizeof(uint64_t)};
+  int index = ((int)m_type - (int)InternalType::MAP8);
+  assert(index>=0 && index<4);
+  size += sizes[index];
   return size;
 }
 
