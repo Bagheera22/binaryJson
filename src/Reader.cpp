@@ -42,6 +42,18 @@ InternalType ReaderString::getInternalType() const
   return m_type;
 }
 
+uint64_t ReaderString::getFullObjectBytesSize() const
+{
+  uint64_t size = sizeof(InternalType) + m_size;
+  
+  uint64_t sizes[4] = {sizeof(uint8_t), sizeof(uint16_t), sizeof(uint32_t), sizeof(uint64_t)};
+  int index = ((int)m_type - (int)InternalType::VECTOR8);
+  assert(index>=0 && index<4);
+  size += sizes[index];
+  return size;
+}
+
+
 ReaderVector::ReaderVector(const void* attr)
 : m_type(InternalType::NULL_)
 , m_beginData(nullptr)
@@ -287,27 +299,12 @@ IReader* read(const void* data, uint64_t* size )
       return value;
     }
     case InternalType::STRING8:
-    {
-      auto value = new ReaderString(data);
-      *size = sizeof(InternalType) + sizeof(uint8_t) + value->length();
-      return value;
-    }
     case InternalType::STRING16:
-    {
-      auto value = new ReaderString(data);
-      *size = sizeof(InternalType) + sizeof(uint16_t) + value->length();
-      return value;
-    }
     case InternalType::STRING32:
-    {
-      auto value = new ReaderString(data);
-      *size = sizeof(InternalType) + sizeof(uint32_t) + value->length();
-      return value;
-    }
     case InternalType::STRING64:
     {
       auto value = new ReaderString(data);
-      *size = sizeof(InternalType) + sizeof(uint64_t) + value->length();
+      *size = value->getFullObjectBytesSize();
       return value;
     }
     case InternalType::VECTOR8:

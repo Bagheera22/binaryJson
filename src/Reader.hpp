@@ -55,6 +55,8 @@ public:
   }
   InternalType getInternalType() const override;
   
+  uint64_t getFullObjectBytesSize() const;
+
   Type getType() const override
   {
     return Type::STRING;
