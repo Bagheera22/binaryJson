@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.1.0)
 
-project(testStudent)
+project(converter)
 
 
 include_directories(src)
@@ -11,4 +11,4 @@ file(GLOB HEADERS "src/binJson/*.hpp")
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(testStudent ${SOURCES} ${HEADERS})
+add_executable(converter ${SOURCES} ${HEADERS})
