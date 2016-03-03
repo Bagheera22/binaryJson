@@ -1,6 +1,8 @@
-#include "Serialize.hpp"
+#include <binJson/Serialize.hpp>
 #include <cassert>
 
+namespace binJson
+{
 uint64_t sizeType(ISerialize* v);
 void* serializeAttr(ISerialize* v, void* data);
 
@@ -432,4 +434,5 @@ void* writeBuffer(void* buffer, void *data, size_t len)
 {
   memcpy(buffer,data,len);
   return ((unsigned char*)buffer + len);
+}
 }

@@ -1,6 +1,9 @@
-#include "Reader.hpp"
+#include <binJson/Reader.hpp>
 #include <iostream>
 #include <cassert>
+
+namespace binJson
+{
 
 ReaderString::ReaderString(const void* valueAttr)
 :m_type(InternalType::NULL_)
@@ -47,7 +50,7 @@ uint64_t ReaderString::getFullObjectBytesSize() const
   uint64_t size = sizeof(InternalType) + m_size;
   
   uint64_t sizes[4] = {sizeof(uint8_t), sizeof(uint16_t), sizeof(uint32_t), sizeof(uint64_t)};
-  int index = ((int)m_type - (int)InternalType::VECTOR8);
+  int index = ((int)m_type - (int)InternalType::STRING8);
   assert(index>=0 && index<4);
   size += sizes[index];
   return size;
@@ -342,4 +345,6 @@ IReader* read(const void* data, uint64_t* size )
     return nullptr;
   };
   return nullptr;
+}
+
 }

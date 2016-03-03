@@ -1,31 +1,19 @@
-#include "Serialize.hpp"
-#include "jsonToBin.hpp"
-#include "rapidjson/rapidjson.h"
-#include "rapidjson/document.h"
-namespace rapidjson
-{
-    class CrtAllocator;
-    template <typename CharType>
-    struct UTF8;
-    template <typename BaseAllocator>
-    class MemoryPoolAllocator;
-    template <typename Encoding, typename Allocator>
-    class GenericValue;
-    template <typename Encoding, typename Allocator>
-    class GenericDocument;
-};
+#include <binJson/jsonToBin.hpp>
+#include <binJson/Serialize.hpp>
+#include <binJson/rapidjsonConstants.hpp>
+#include <rapidjson/rapidjson.h>
+#include <rapidjson/document.h>
 
-typedef rapidjson::UTF8<char> Encoding;
-typedef rapidjson::CrtAllocator Allocator;
-
-using namespace rapidjson;
-ISerialize* convertBin(const rapidjson::GenericValue<Encoding, Allocator>& json)
+namespace binJson
 {
-    using Value = rapidjson::GenericValue<Encoding, Allocator>;
+
+ISerialize* convertBin(const rapidjsonValue& json)
+{
+
     if(json.IsObject())
     {
         std::map<std::string,ISerialize*> map;
-        for(Value::ConstMemberIterator itr = json.MemberBegin(), end = json.MemberEnd(); itr != end; ++itr)
+        for(rapidjsonValue::ConstMemberIterator itr = json.MemberBegin(), end = json.MemberEnd(); itr != end; ++itr)
         {
             map.insert(std::make_pair(itr->name.GetString(), convertBin(itr->value)));
         }
@@ -36,7 +24,7 @@ ISerialize* convertBin(const rapidjson::GenericValue<Encoding, Allocator>& json)
     {
         std::vector<ISerialize*> vector;
         vector.reserve(json.Size());
-        for(rapidjson::SizeType i = 0, size = json.Size(); i < size; i++)
+        for(::rapidjson::SizeType i = 0, size = json.Size(); i < size; i++)
         {
             vector.push_back( convertBin(json[i]));
         }
@@ -105,10 +93,9 @@ ISerialize* convertBin(const rapidjson::GenericValue<Encoding, Allocator>& json)
 
 }
 
-ISerialize* jsonToBin(const char* data)
+ISerialize* convertJsonToBinJson(const char* data)
 {
-    using Value = rapidjson::GenericValue<Encoding, Allocator>;
-    rapidjson::GenericDocument<Encoding, Allocator> doc;
+    rapidjsonGenericDocument doc;
     if(doc.Parse<0>(data).HasParseError())
     {
         return  nullptr;
@@ -127,11 +114,12 @@ ISerialize* jsonToBin(const char* data)
     if(doc.IsObject())
     {
         std::map<std::string,ISerialize*> map;
-        for(Value::ConstMemberIterator itr = doc.MemberBegin(), end = doc.MemberEnd(); itr != end; ++itr)
+        for(rapidjsonValue::ConstMemberIterator itr = doc.MemberBegin(), end = doc.MemberEnd(); itr != end; ++itr)
         {
             map.insert(std::make_pair(itr->name.GetString(), convertBin(itr->value)));
         }
         return new SerializeMap(map);
     }
     return nullptr;
+}
 }
