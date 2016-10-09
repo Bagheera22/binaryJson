@@ -19,3 +19,5 @@ script:
   - mkdir build
   - cd build
   - cmake .. && make
+  - ./converter -toBin ../example/AllSets-x3.json test.bin
+  - ./converter -toJson test.bin test.json
