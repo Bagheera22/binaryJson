@@ -1,5 +1,7 @@
 #include <binJson/Serialize.hpp>
 #include <cassert>
+#include <limits>
+#include <cstring>
 
 namespace binJson
 {

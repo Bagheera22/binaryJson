@@ -2,7 +2,7 @@
 #include <binJson/Reader.hpp>
 #include <binJson/Serialize.hpp>
 #include <binJson/jsonToBin.hpp>
-#include <binJson/BinToJson.hpp>
+#include <binJson/BinTojson.hpp>
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/writer.h>
 #include <rapidjson/document.h>
