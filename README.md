@@ -1,3 +1,4 @@
+![alt tag](https://travis-ci.org/Bagheera22/binaryJson.svg?branch=master)
 # binaryJson
 
 binary json format:
