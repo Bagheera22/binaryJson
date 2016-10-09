@@ -434,7 +434,7 @@ uint64_t sizeType(ISerialize* v)
 
 void* writeBuffer(void* buffer, void *data, size_t len)
 {
-  memcpy(buffer,data,len);
+  std::memcpy(buffer,data,len);
   return ((unsigned char*)buffer + len);
 }
 }

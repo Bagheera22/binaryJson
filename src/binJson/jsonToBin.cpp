@@ -3,6 +3,7 @@
 #include <binJson/rapidjsonConstants.hpp>
 #include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>
+#include <limits>
 
 namespace binJson
 {
