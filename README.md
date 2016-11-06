@@ -3,8 +3,8 @@
 
 binary json format:
 - Quicker to read 
-- In some caseses reduce the memory that uses.
-- No need to parser elements before the element that you want it
+- In some cases reduce the memory that uses.
+- No need to parse elements before the element that you want it
 
 # Comparative
 
