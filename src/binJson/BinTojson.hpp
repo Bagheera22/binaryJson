@@ -3,5 +3,5 @@
 
 namespace binJson
 {
-	rapidjsonValue_ptr convertBinJsonToJson(const char* data);
+rapidjsonValue_ptr convertBinJsonToJson(const char* data);
 }
